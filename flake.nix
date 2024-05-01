@@ -13,7 +13,7 @@
       nixStoreTmuxBin=$(readlink $tmuxBin)
       nixStoreTmuxBins=$(dirname $nixStoreTmuxBin)
       nixStoreTmux=$(dirname $nixStoreTmuxBins)
-      nixStoreTmuxConf="$nixStoreTmux/share/tmux/tmux.conf"
+      nixStoreTmuxConf="$nixStoreTmux/share/marcuswhybrow-tmux/tmux.conf"
       echo $nixStoreTmuxConf
     '';
     linkConf = pkgs.writeShellScript "link-conf" ''
