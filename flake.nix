@@ -115,6 +115,15 @@
       ];
     };
 
+    packages.x86_64-linux.fish-abbreviations = let 
+      tmux = "${inputs.self.packages.x86_64-linux.tmux}/bin/tmux";
+    in pkgs.writeTextDir "share/fish/vendor_conf.d/tmux.fish" ''
+      if status is-interactive
+        abbr --add n ${tmux} new -A -s nixos ~/Repos/nixos
+        abbr --add c ${tmux} new -A -s config ~/.config
+      end
+    '';
+
     packages.x86_64-linux.default = inputs.self.packages.x86_64-linux.tmux;
   };
 }
