@@ -105,6 +105,28 @@
       set -g @catppuccin_status_modules_right "host session"
       EOF
     '';
+
+    fishAbbrs = pkgs.writeTextDir "share/fish/vendor_conf.d/marcuswhybrow-tmux.fish" ''
+      if status is-interactive
+        abbr --add n tmux new -A -s nixos ~/Repos/nixos
+        abbr --add c tmux new -A -s config ~/.config
+      end
+    '';
+
+    fishFuncs = pkgs.symlinkJoin {
+      name = "tmux-fish-funcs";
+      paths = [
+        (pkgs.writeTextDir "share/fish/vendor_functions.d/code.fish" ''
+          function code 
+            set name (ls $HOME/Repos | ${pkgs.fzf}/bin/fzf --bind tab:up,btab:down)
+            tmux new \
+              -A \
+              -s "$name" \
+              -c "$HOME/Repos/$name"
+          end
+        '')
+      ];
+    };
   in {
     packages.x86_64-linux.tmux = pkgs.symlinkJoin {
       name = "tmux";
@@ -112,17 +134,10 @@
         wrapper # this first ./bin/tmux has precedence
         pkgs.tmux
         pkgs.tmuxPlugins.catppuccin 
+        fishAbbrs
+        fishFuncs
       ];
     };
-
-    packages.x86_64-linux.fish-abbreviations = let 
-      tmux = "${inputs.self.packages.x86_64-linux.tmux}/bin/tmux";
-    in pkgs.writeTextDir "share/fish/vendor_conf.d/tmux.fish" ''
-      if status is-interactive
-        abbr --add n ${tmux} new -A -s nixos ~/Repos/nixos
-        abbr --add c ${tmux} new -A -s config ~/.config
-      end
-    '';
 
     packages.x86_64-linux.default = inputs.self.packages.x86_64-linux.tmux;
   };
