@@ -51,11 +51,11 @@
       # packaged version of tmux, and linking it to 
       # ~/.config/marcuswhybrow-tmux/tmux.conf. This is bound to the \`r\` key
       # directly before sourcing that file.
-      bind r run-shell "$out/share/marcuswhybrow-tmux/link-conf"\; source-file ~/.config/marcuswhybrow-tmux/tmux.conf
+      bind C-r run-shell "$out/share/marcuswhybrow-tmux/link-conf"\; source-file ~/.config/marcuswhybrow-tmux/tmux.conf
 
       # During development we can do \`nix build\` to get a \`result\` directory,
       # then manually source the conf in the result.
-      bind d source-file ./result/share/marcuswhybrow-tmux/tmux.conf
+      bind C-d source-file ./result/share/marcuswhybrow-tmux/tmux.conf
 
       set -g default-command "${fish}"
 
