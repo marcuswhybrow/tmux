@@ -77,6 +77,7 @@
       bind k select-pane -U        # up
       bind l select-pane -R        # right
 
+
       # Mouse control
       set -g mouse on
 
@@ -84,7 +85,16 @@
       set-option -g allow-rename off
 
       # Fix neovim colors look wrong inside tmux (https://stackoverflow.com/questions/60309665)
-      set-option -sa terminal-features ',xterm-256color:RGB'
+      # set-option -sa terminal-features ',xterm-256color:RGB'
+      # set-option -ga terminal-features ",xterm-256color:usstyle"
+      # set -g default-terminal "xterm-256color"
+      # set-option -g default-terminal "tmux-256color"
+      # set-option -ga terminal-overrides ",alacritty:Tc"
+      set -g default-terminal "alacritty" 
+      set -g terminal-overrides ",alacritty:Tc"
+
+      #set -g default-terminal "alcritty":wq
+      # set -as terminal-features ",xterm-256color:RGB"
 
       # Advice from neovim :checkhealth ("autoread" may not work)
       set-option -g focus-events on
@@ -92,17 +102,43 @@
       # Advice from neovim :checkhealth
       set-option -sg escape-time 20
 
+      # Custom Theme
+      set-option -g status-position top
+      # set -g status-justify left
+
+      set -g status-left-style 'fg=#8c8fa1 bg=#eff1f5'
+      set -g status-left "#S "
+      set -g status-left-length 100
+
+      set -g status-right ""
+      set -g status-right-length 50
+      set -g status-right-style 'fg=#4c4f69 bg=#dce0e8'
+
+      setw -g window-status-current-style 'fg=#4c4f69 bg=#eff1f5'
+      setw -g window-status-current-format '#I #W '
+
+      setw -g window-status-style 'fg=#acb0be  bg=#eff1f5'
+      setw -g window-status-format '#I '
+
+      # setw -g window-status-bell-style 'fg=yellow bg=red bold'
+
+      # # messages
+      # set -g message-style 'fg=yellow bg=red bold'
+
+      set -g status-style fg=default,bg=#eff1f5
+      set -g status-bg "#eff1f5"
+
 
       # Catppuccin Theme config
 
-      # set -g @catppuccin_flavour 'mocha'
-      set -g @catppuccin_flavour 'latte'
-      set -g @catppuccin_window_current_text "#W"
-      set -g @catppuccin_window_default_text "#W"
+      # # set -g @catppuccin_flavour 'mocha'
+      # set -g @catppuccin_flavour 'latte'
+      # set -g @catppuccin_window_current_text "#W"
+      # set -g @catppuccin_window_default_text "#W"
 
-      # I can't get these to work??
-      # set -g @catppuccin_status_modules_left ""
-      set -g @catppuccin_status_modules_right "host session"
+      # # I can't get these to work??
+      # # set -g @catppuccin_status_modules_left ""
+      # set -g @catppuccin_status_modules_right "host session"
       EOF
     '';
 
