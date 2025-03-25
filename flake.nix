@@ -8,18 +8,6 @@
   outputs = inputs: let
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     fish = "${inputs.fish.packages.x86_64-linux.fish}/bin/fish";
-    getConf = pkgs.writeShellScript "get-conf" ''
-      tmuxBin=$(which tmux)
-      nixStoreTmuxBin=$(readlink $tmuxBin)
-      nixStoreTmuxBins=$(dirname $nixStoreTmuxBin)
-      nixStoreTmux=$(dirname $nixStoreTmuxBins)
-      nixStoreTmuxConf="$nixStoreTmux/share/marcuswhybrow-tmux/tmux.conf"
-      echo $nixStoreTmuxConf
-    '';
-    linkConf = pkgs.writeShellScript "link-conf" ''
-      mkdir --parents ~/.config/marcuswhybrow-tmux
-      ln --symbolic --force $(${getConf}) ~/.config/marcuswhybrow-tmux/tmux.conf
-    '';
     wrapper = pkgs.runCommand "tmux-wrapper" {
       nativeBuildInputs = [ pkgs.makeWrapper ];
     } ''
@@ -28,8 +16,6 @@
         --add-flags "source $out/share/marcuswhybrow-tmux/tmux.conf \;"
 
       mkdir --parents $out/share/marcuswhybrow-tmux
-      ln -s ${getConf} $out/share/marcuswhybrow-tmux/get-conf
-      ln -s ${linkConf} $out/share/marcuswhybrow-tmux/link-conf
 
       cat > $out/share/marcuswhybrow-tmux/light.conf << EOF 
       # Matches Catppuccin Late colours (but appropriate for any light theme)
@@ -100,7 +86,7 @@
       # Advice from neovim :checkhealth
       set-option -sg escape-time 20
 
-      # Custom Theme
+      # # Custom Theme
       set-option -g status-position top
       set -g status-left "󰹇 #S "
       set -g status-left-length 100
@@ -112,7 +98,6 @@
       source-file $out/share/marcuswhybrow-tmux/light.conf
       bind C-l source-file $out/share/marcuswhybrow-tmux/light.conf
       bind C-d source-file $out/share/marcuswhybrow-tmux/dark.conf
-
       EOF
     '';
 
@@ -143,7 +128,6 @@
       paths = [ 
         wrapper # this first ./bin/tmux has precedence
         pkgs.tmux
-        pkgs.tmuxPlugins.catppuccin 
         fishAbbrs
         fishFuncs
       ];
