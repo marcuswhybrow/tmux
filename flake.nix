@@ -69,13 +69,13 @@
       set-option -g allow-rename off
 
       # Fix neovim colors look wrong inside tmux (https://stackoverflow.com/questions/60309665)
-      # set-option -sa terminal-features ',xterm-256color:RGB'
+      set-option -sa terminal-features ',xterm-256color:RGB'
+      set -g default-terminal "xterm-256color"
       # set-option -ga terminal-features ",xterm-256color:usstyle"
-      # set -g default-terminal "xterm-256color"
       # set-option -g default-terminal "tmux-256color"
       # set-option -ga terminal-overrides ",alacritty:Tc"
-      set -g default-terminal "alacritty" 
-      set -g terminal-overrides ",alacritty:Tc"
+      # set -g default-terminal "alacritty" 
+      # set -g terminal-overrides ",alacritty:Tc"
 
       #set -g default-terminal "alcritty":wq
       # set -as terminal-features ",xterm-256color:RGB"
