@@ -56,8 +56,6 @@
       EOF
 
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
-      run-shell ${pkgs.tmuxPlugins.catppuccin.rtp}
-
       set -g default-command "${fish}"
 
       set -g prefix C-space
