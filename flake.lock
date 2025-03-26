@@ -35,11 +35,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1727994773,
-        "narHash": "sha256-E2/zr6QOtTCrxC/qZ3jYdQ/vLVacUh9L4zm6Y5924x4=",
+        "lastModified": 1742998973,
+        "narHash": "sha256-lmigJd6wBX/u+Uo0S3g/2R2JoU9nIEZiVKEp7jghirE=",
         "owner": "marcuswhybrow",
         "repo": "fish",
-        "rev": "7d480389868d7ad55f8a42937c0deb4fc8d06d58",
+        "rev": "7a1cfe89841c5ff2f860dd3b8721fbaccab1fd3f",
         "type": "github"
       },
       "original": {
