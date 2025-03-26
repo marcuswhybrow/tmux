@@ -8,6 +8,7 @@
   outputs = inputs: let
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     fish = "${inputs.fish.packages.x86_64-linux.fish}/bin/fish";
+    tmux = "$out/bin/tmux";
     wrapper = pkgs.runCommand "tmux-wrapper" {
       nativeBuildInputs = [ pkgs.makeWrapper ];
     } ''
@@ -16,30 +17,6 @@
         --add-flags "source $out/share/marcuswhybrow-tmux/tmux.conf \;"
 
       mkdir --parents $out/share/marcuswhybrow-tmux
-
-      cat > $out/share/marcuswhybrow-tmux/light.conf << EOF 
-      # Matches Catppuccin Late colours (but appropriate for any light theme)
-      set -g status-left-style 'fg=#8c8fa1 bg=default'
-      setw -g window-status-current-style 'fg=#4c4f69 bg=default'
-      setw -g window-status-style 'fg=#acb0be  bg=default'
-      set -g status-style fg=default,bg=default
-      set -g status-bg "default"
-      # messages
-      # set -g message-style 'fg=yellow bg=red bold'
-      # setw -g window-status-bell-style 'fg=yellow bg=red bold'
-      EOF
-
-      cat > $out/share/marcuswhybrow-tmux/dark.conf << EOF 
-      # Matches Catppuccin Mocha colours (but appropriate for any light theme)
-      set -g status-left-style 'fg=#6c7086 bg=default'
-      setw -g window-status-current-style 'fg=#CDD6F4 bg=default'
-      setw -g window-status-style 'fg=#6c7086  bg=default'
-      set -g status-style fg=default,bg=default
-      set -g status-bg "default"
-      # messages
-      # set -g message-style 'fg=yellow bg=red bold'
-      # setw -g window-status-bell-style 'fg=yellow bg=red bold'
-      EOF
 
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
       set -g default-command "${fish}"
@@ -88,16 +65,44 @@
 
       # # Custom Theme
       set-option -g status-position top
-      set -g status-left "󰹇 #S "
-      set -g status-left-length 100
-      set -g status-right ""
-      set -g status-right-length 0
+      set -g status-justify centre
+      set -g status-left ""
+      set -g status-left-length 0
+      set -g status-right "#S"
+      set -g status-right-length 100
+
+      # setw -g window-status-current-format ' #W '
+      # setw -g window-status-format '#W'
+
+      # setw -g window-status-current-format ''
+      # setw -g window-status-format ''
+
       setw -g window-status-current-format '#I #W '
-      setw -g window-status-format '#I '
+      setw -g window-status-format '#I #W '
+
+      set -g status-left-style 'fg=cyan bg=default'
+      set -g status-right-style 'fg=default bg=default'
+      setw -g window-status-current-style 'fg=cyan bg=default'
+      setw -g window-status-style 'fg=default  bg=default'
+      set -g status-style fg=default,bg=default
+      set -g status-bg "default"
+      set -g message-style 'fg=default bg=default'
+      setw -g window-status-bell-style 'fg=red bg=default'
+
+      # Make windows start from 1 (not 0)
+      set -g base-index 1
+      setw -g pane-base-index 1
+
+      bind-key 1 if-shell '${tmux} select-window -t :1' ''' 'new-window -t :1'
+      bind-key 2 if-shell '${tmux} select-window -t :2' ''' 'new-window -t :2'
+      bind-key 3 if-shell '${tmux} select-window -t :3' ''' 'new-window -t :3'
+      bind-key 4 if-shell '${tmux} select-window -t :4' ''' 'new-window -t :4'
+      bind-key 5 if-shell '${tmux} select-window -t :5' ''' 'new-window -t :5'
+      bind-key 6 if-shell '${tmux} select-window -t :6' ''' 'new-window -t :6'
+      bind-key 7 if-shell '${tmux} select-window -t :7' ''' 'new-window -t :7'
+      bind-key 8 if-shell '${tmux} select-window -t :9' ''' 'new-window -t :9'
+      bind-key 0 if-shell '${tmux} select-window -t :10' ''' 'new-window -t :10'
       
-      source-file $out/share/marcuswhybrow-tmux/light.conf
-      bind C-l source-file $out/share/marcuswhybrow-tmux/light.conf
-      bind C-d source-file $out/share/marcuswhybrow-tmux/dark.conf
       EOF
     '';
 
