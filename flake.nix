@@ -110,6 +110,8 @@
       bind-key 7 if-shell '${tmux} select-window -t :7' ''' 'new-window -t :7'
       bind-key 8 if-shell '${tmux} select-window -t :9' ''' 'new-window -t :9'
       bind-key 0 if-shell '${tmux} select-window -t :10' ''' 'new-window -t :10'
+
+      bind-key c run-shell "fish --command code"
       
       EOF
     '';
@@ -124,13 +126,41 @@
     fishFuncs = pkgs.symlinkJoin {
       name = "tmux-fish-funcs";
       paths = [
-        (pkgs.writeTextDir "share/fish/vendor_functions.d/code.fish" ''
+        (pkgs.writeTextDir "share/fish/vendor_functions.d/code.fish" /* fish */ ''
           function code 
-            set name (ls $HOME/Repos | ${pkgs.fzf}/bin/fzf --bind tab:up,btab:down)
-            tmux new \
-              -A \
-              -s "$name" \
-              -c "$HOME/Repos/$name"
+            set base "$HOME/Repos"
+            set name "$argv[1]"
+            
+            if test -z "$name" || not test -d "$base/$name"
+            set name (ls "$base" | ${pkgs.fzf}/bin/fzf \
+              --select-1 \
+              --border  \
+              --height 20 \
+              --reverse \
+              --bind tab:up,btab:down \
+              --tmux 90%,60% \
+              --query "$name" \
+              --preview "ls $base/{}" \
+            )
+            end
+
+            if not test -d "$base/$name"
+              echo "There's no repo named '$name'"
+              exit 1
+            end
+
+            set dir "$HOME/Repos/$name"
+
+            if not tmux has-session -t "$name"
+              tmux new -ds "$name" -c "$dir"
+              tmux send-keys -t "$name.1" "vim ." ENTER
+            end
+
+            if test -n "$TMUX"
+              tmux switch-client -t "$name"
+            else
+              tmux attach -t "$name"
+            end
           end
         '')
       ];
