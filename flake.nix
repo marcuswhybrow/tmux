@@ -63,36 +63,42 @@
       # Advice from neovim :checkhealth
       set-option -sg escape-time 20
 
-      # # Custom Theme
+      # Tmux position
       set-option -g status-position top
+
+      # Window switcher format
       set -g status-justify centre
-      set -g status-left ""
-      set -g status-left-length 0
-      set -g status-right "#S"
-      set -g status-right-length 100
-
-      # setw -g window-status-current-format ' #W '
-      # setw -g window-status-format '#W'
-
-      # setw -g window-status-current-format ''
-      # setw -g window-status-format ''
-
       setw -g window-status-current-format '#I #W '
       setw -g window-status-format '#I #W '
 
-      set -g status-left-style 'fg=cyan bg=default'
-      set -g status-right-style 'fg=default bg=default'
-      setw -g window-status-current-style 'fg=cyan bg=default'
-      setw -g window-status-style 'fg=default  bg=default'
-      set -g status-style fg=default,bg=default
-      set -g status-bg "default"
+      # Overall style
+      set -g status-style 'fg=default bg=default'
       set -g message-style 'fg=default bg=default'
+
+      # Left aligned area
+      set -g status-left ""
+      set -g status-left-length 0
+      set -g status-left-style 'fg=brightblack bg=default'
+
+      # Window switcher
+      setw -g window-status-current-style 'fg=default bg=default'
+      setw -g window-status-style 'fg=brightblack bg=default'
       setw -g window-status-bell-style 'fg=red bg=default'
+
+      # Right aligned area
+      set -g status-right "#S"
+      set -g status-right-length 100
+      set -g status-right-style 'fg=brightblack bg=default'
+
+      # Pane borders
+      set -g pane-active-border-style 'fg=brightblack bg=default'
+      set -g pane-border-style 'fg=brightblack bg=default'
 
       # Make windows start from 1 (not 0)
       set -g base-index 1
       setw -g pane-base-index 1
 
+      # Create or select windows
       bind-key 1 if-shell '${tmux} select-window -t :1' ''' 'new-window -t :1'
       bind-key 2 if-shell '${tmux} select-window -t :2' ''' 'new-window -t :2'
       bind-key 3 if-shell '${tmux} select-window -t :3' ''' 'new-window -t :3'
