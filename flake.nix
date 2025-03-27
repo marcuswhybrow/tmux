@@ -66,12 +66,8 @@
       # Tmux position
       set-option -g status-position top
 
-      # Window switcher format
+      # Status format
       set -g status-justify centre
-      setw -g window-status-current-format '#I #W '
-      setw -g window-status-format '#I #W '
-
-      # Overall style
       set -g status-style 'fg=default bg=default'
       set -g message-style 'fg=default bg=default'
 
@@ -80,9 +76,15 @@
       set -g status-left-length 0
       set -g status-left-style 'fg=brightblack bg=default'
 
-      # Window switcher
+      # Window current
+      setw -g window-status-current-format '#I #W '
       setw -g window-status-current-style 'fg=default bg=default'
+
+      # Window normal
+      setw -g window-status-format '#I #W '
       setw -g window-status-style 'fg=brightblack bg=default'
+
+      # Window bell
       setw -g window-status-bell-style 'fg=red bg=default'
 
       # Right aligned area
