@@ -118,7 +118,7 @@
       EOF
     '';
 
-    fishAbbrs = pkgs.writeTextDir "share/fish/vendor_conf.d/marcuswhybrow-tmux.fish" ''
+    fishAbbrs = pkgs.writeTextDir "share/fish/vendor_conf.d/marcuswhybrow-tmux.fish" /* fish */ ''
       if status is-interactive
         abbr --add n tmux new -A -s nixos ~/Repos/nixos
         abbr --add c tmux new -A -s config ~/.config
@@ -128,6 +128,24 @@
     fishFuncs = pkgs.symlinkJoin {
       name = "tmux-fish-funcs";
       paths = [
+        (pkgs.writeTextDir "share/fish/vendor_completions.d/code.fish" /* fish */ ''
+          complete \
+            --command code \
+            --no-files \
+            --arguments "(complete-code)"
+        '')
+        (pkgs.writeTextDir "share/fish/vendor_functions.d/complete-code.fish" /* fish */ ''
+          function complete-code 
+            set sessions "$(tmux list-sessions | sed -E 's/:.*$//')"
+            for name in (ls $HOME/Repos)
+              if echo $sessions | grep --line-regexp "$name" >/dev/null
+                echo -e "$name\tactive"
+              else
+                echo -e "$name\t"
+              end
+            end
+          end
+        '')
         (pkgs.writeTextDir "share/fish/vendor_functions.d/code.fish" /* fish */ ''
           function code 
             set base "$HOME/Repos"
