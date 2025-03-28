@@ -41,7 +41,7 @@
               state: '#[fg=brightblack]'
               branch: '#[fg=brightblack]'
               remote: '#[fg=brightblack]'
-              divergence: '#[fg=brightblack]'
+              divergence: '#[fg=red]'
               staged: '#[fg=brightblack]'
               conflict: '#[fg=brightblack]'
               modified: '#[fg=brightblack]'
@@ -50,7 +50,7 @@
               clean: '#[fg=brightblack]'
               insertions: '#[fg=brightblack]'
               deletions: '#[fg=brightblack]'
-          layout: [divergence, flags, branch, ' ']
+          layout: [divergence, flags, branch]
           options:
               branch_max_len: 0
               branch_trim: right
@@ -114,7 +114,7 @@
       set -g message-style 'fg=default bg=default'
 
       # Left aligned area
-      set -g status-left ""
+      set -g status-left "#S"
       set -g status-left-length 100
       set -g status-left-style 'fg=brightblack bg=default'
 
@@ -130,7 +130,7 @@
       setw -g window-status-bell-style 'fg=red bg=default'
 
       # Right aligned area
-      set -g status-right '#(${gitmux} -cfg $out/share/marcuswhybrow-tmux/gitmux.conf "#{pane_current_path}")#S'
+      set -g status-right '#(${gitmux} -cfg $out/share/marcuswhybrow-tmux/gitmux.conf "#{pane_current_path}")'
       set -g status-right-length 100
       set -g status-right-style 'fg=brightblack bg=default'
 
