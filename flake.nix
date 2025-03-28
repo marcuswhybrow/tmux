@@ -179,12 +179,26 @@
     fishFuncs = pkgs.symlinkJoin {
       name = "tmux-fish-funcs";
       paths = [
+        # This code is located such that fish will automatically call it.
+        # It sets up the correct automatic tab completion values for the 
+        # fish `code` function define below.
         (pkgs.writeTextDir "share/fish/vendor_completions.d/code.fish" /* fish */ ''
           complete \
             --command code \
             --no-files \
             --arguments "(complete-code)"
         '')
+
+        # This is a helper function for automatic tab completion of the `code` fish function.
+        # It's output conforms to fish completion format:
+        # - https://fishshell.com/docs/current/completions.html
+        #
+        # Each line has two fields separated by a TAB character.
+        # Field 1 is a value which may be selected
+        # Field 2 is it's description
+        #
+        # In this case, ehe description will show "active" if there's an active 
+        # tmux session of that name
         (pkgs.writeTextDir "share/fish/vendor_functions.d/complete-code.fish" /* fish */ ''
           function complete-code 
             set sessions "$(tmux list-sessions | sed -E 's/:.*$//')"
@@ -197,40 +211,98 @@
             end
           end
         '')
+
+        # Utility function to start or switch to tmux sessions named after any project 
+        # in the ~/Repos directory.
         (pkgs.writeTextDir "share/fish/vendor_functions.d/code.fish" /* fish */ ''
           function code 
             set base "$HOME/Repos"
             set name "$argv[1]"
-            
+            set sessions "$(tmux list-sessions | sed -E 's/:.*$//')"
+
+            # First arg does NOT match any dir in ~/Repos
             if test -z "$name" || not test -d "$base/$name"
-            set name (ls "$base" | ${pkgs.fzf}/bin/fzf \
-              --select-1 \
-              --border  \
-              --height 20 \
-              --reverse \
-              --bind tab:down,btab:up \
-              --tmux 90%,60% \
-              --query "$name" \
-              --preview "ls $base/{}" \
-            )
+              set repos (ls "$base")
+
+              # Calc length of longest dir name in ~/Repos
+              set max_length 0
+              for repo in $repos
+                set len (string length "$repo")
+                if test $len -gt $max_length 
+                  set max_length $len
+                end
+              end
+
+              # fzf can split lines into "fields" given a "delimiter".
+              # We'll create two fields, the first preserving the exact dir name,
+              # the second being what we want the user to see. e.g.
+              #
+              #       repo_a/repo_a       (active)
+              # repository_b/repository_b (active)
+              #      another/another
+              #
+              # I aligned it by the delimiter only for legibility.
+              #
+              # The delimiter MUST be "/" as it's the only character NOT allowed 
+              # in a directory name.
+              set fzf_items "$(
+                for repo in $repos
+                  set len (string length "$repo")
+                  set delta (math $max_length - $len)
+                  set margin 1
+                  set padding_count (math $delta + $margin)
+                  set padding (string repeat -n $padding_count ' ')
+
+                  if echo $sessions | grep --line-regexp "$repo" >/dev/null
+                    echo -e "$repo/$repo$padding(active)"
+                  else
+                    echo -e "$repo/$repo$padding"
+                  end
+                end 
+              )"
+
+
+              # Here we ask fzf (a visual fuzzy finder) to show the user the
+              # above items. It will show the second field to the user, whilst
+              # using the preserved path (the first field) for it's preview.
+              set fzf_choice "$(echo "$fzf_items" | ${pkgs.fzf}/bin/fzf \
+                --preview-label "Preview" \
+                --delimiter "/" \
+                --with-nth 2 \
+                --highlight-line \
+                --select-1 \
+                --border  \
+                --height 20 \
+                --reverse \
+                --bind tab:down,btab:up \
+                --tmux 90%,60% \
+                --query "$name" \
+                --preview "ls $base/{1}" \
+              )"
+
+              # fzf returns the full item (both fields), but we only need the 
+              # orginal repo directory name (the first field)
+              set name (echo "$fzf_choice" | cut --delimiter "/" --fields 1)
             end
 
             if not test -d "$base/$name"
               echo "There's no repo named '$name'"
-              exit 1
-            end
+            else 
+              set dir "$HOME/Repos/$name"
 
-            set dir "$HOME/Repos/$name"
+              if not tmux has-session -t "$name"
+                tmux new -ds "$name" -c "$dir"
+                tmux send-keys -t "$name.1" "${vim} ." ENTER
+              end
 
-            if not tmux has-session -t "$name"
-              tmux new -ds "$name" -c "$dir"
-              tmux send-keys -t "$name.1" "${vim} ." ENTER
-            end
 
-            if test -n "$TMUX"
-              tmux switch-client -t "$name"
-            else
-              tmux attach -t "$name"
+              # If already inside a tmux session, one cannot "attach" to another
+              # session. One must instead "switch-client"
+              if test -n "$TMUX"
+                tmux switch-client -t "$name"
+              else
+                tmux attach -t "$name"
+              end
             end
           end
         '')
