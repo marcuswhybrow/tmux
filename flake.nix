@@ -10,6 +10,7 @@
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     fish = "${inputs.fish.packages.x86_64-linux.fish}/bin/fish";
     vim = "${inputs.neovim.packages.x86_64-linux.nvim}/bin/vim";
+    gitmux = "${pkgs.gitmux}/bin/gitmux";
     tmux = "$out/bin/tmux";
     wrapper = pkgs.runCommand "tmux-wrapper" {
       nativeBuildInputs = [ pkgs.makeWrapper ];
@@ -19,6 +20,45 @@
         --add-flags "source $out/share/marcuswhybrow-tmux/tmux.conf \;"
 
       mkdir --parents $out/share/marcuswhybrow-tmux
+
+      cat > $out/share/marcuswhybrow-tmux/gitmux.conf << EOF
+        tmux:
+          symbols:
+              branch: '''
+              hashprefix: ':'
+              ahead: ↑
+              behind: ↓
+              staged: ''
+              conflict: ''
+              modified: '+'
+              untracked: '…'
+              stashed: '⚑'
+              clean: 
+              insertions: Σ
+              deletions: Δ
+          styles:
+              clear: '#[fg=brightblack]'
+              state: '#[fg=brightblack]'
+              branch: '#[fg=brightblack]'
+              remote: '#[fg=brightblack]'
+              divergence: '#[fg=brightblack]'
+              staged: '#[fg=brightblack]'
+              conflict: '#[fg=brightblack]'
+              modified: '#[fg=brightblack]'
+              untracked: '#[fg=brightblack]'
+              stashed: '#[fg=brightblack]'
+              clean: '#[fg=brightblack]'
+              insertions: '#[fg=brightblack]'
+              deletions: '#[fg=brightblack]'
+          layout: [divergence, flags, branch, ' ']
+          options:
+              branch_max_len: 0
+              branch_trim: right
+              ellipsis: …
+              hide_clean: true
+              swap_divergence: false
+              divergence_space: false
+      EOF
 
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
       set -g default-command "${fish}"
@@ -75,7 +115,7 @@
 
       # Left aligned area
       set -g status-left ""
-      set -g status-left-length 0
+      set -g status-left-length 100
       set -g status-left-style 'fg=brightblack bg=default'
 
       # Window current
@@ -90,7 +130,7 @@
       setw -g window-status-bell-style 'fg=red bg=default'
 
       # Right aligned area
-      set -g status-right "#S"
+      set -g status-right '#(${gitmux} -cfg $out/share/marcuswhybrow-tmux/gitmux.conf "#{pane_current_path}")#S'
       set -g status-right-length 100
       set -g status-right-style 'fg=brightblack bg=default'
 
