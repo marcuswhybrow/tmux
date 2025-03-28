@@ -117,6 +117,24 @@
         "type": "github"
       }
     },
+    "neovim": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_4"
+      },
+      "locked": {
+        "lastModified": 1743106195,
+        "narHash": "sha256-NNvjW4/Xi7O6kVkmsQGz8FEYNng1eAYM7gSzb8Iat8g=",
+        "owner": "marcuswhybrow",
+        "repo": "neovim",
+        "rev": "5a4ff7da8e1aaf1c18df3bca8eaf0dcb02e8bc13",
+        "type": "github"
+      },
+      "original": {
+        "owner": "marcuswhybrow",
+        "repo": "neovim",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1701253981,
@@ -167,6 +185,22 @@
     },
     "nixpkgs_4": {
       "locked": {
+        "lastModified": 1725983898,
+        "narHash": "sha256-4b3A9zPpxAxLnkF9MawJNHDtOOl6ruL0r6Og1TEDGCE=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1355a0cbfeac61d785b7183c0caaec1f97361b43",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_5": {
+      "locked": {
         "lastModified": 1742669843,
         "narHash": "sha256-G5n+FOXLXcRx+3hCJ6Rt6ZQyF1zqQ0DL0sWAMn2Nk0w=",
         "owner": "NixOS",
@@ -184,7 +218,8 @@
     "root": {
       "inputs": {
         "fish": "fish",
-        "nixpkgs": "nixpkgs_4"
+        "neovim": "neovim",
+        "nixpkgs": "nixpkgs_5"
       }
     },
     "rust-overlay": {

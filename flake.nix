@@ -3,11 +3,13 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     fish.url = "github:marcuswhybrow/fish";
+    neovim.url = "github:marcuswhybrow/neovim";
   };
 
   outputs = inputs: let
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     fish = "${inputs.fish.packages.x86_64-linux.fish}/bin/fish";
+    vim = "${inputs.neovim.packages.x86_64-linux.nvim}/bin/vim";
     tmux = "$out/bin/tmux";
     wrapper = pkgs.runCommand "tmux-wrapper" {
       nativeBuildInputs = [ pkgs.makeWrapper ];
@@ -153,7 +155,7 @@
 
             if not tmux has-session -t "$name"
               tmux new -ds "$name" -c "$dir"
-              tmux send-keys -t "$name.1" "vim ." ENTER
+              tmux send-keys -t "$name.1" "${vim} ." ENTER
             end
 
             if test -n "$TMUX"
