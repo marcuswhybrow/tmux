@@ -155,15 +155,15 @@
 
       bind-key c run-shell "fish --command code"
 
-      bind-key !   if-shell '${tmux} select-window -t :1'  'swap-window -dt :1' 'move-window -t :1'
-      bind-key '"' if-shell '${tmux} select-window -t :2'  'swap-window -dt :2' 'move-window -t :2'
-      bind-key £   if-shell '${tmux} select-window -t :3'  'swap-window -dt :3' 'move-window -t :3'
-      bind-key $   if-shell '${tmux} select-window -t :4'  'swap-window -dt :4' 'move-window -t :4'
-      bind-key %   if-shell '${tmux} select-window -t :5'  'swap-window -dt :5' 'move-window -t :5'
-      bind-key ^   if-shell '${tmux} select-window -t :6'  'swap-window -dt :6' 'move-window -t :6'
-      bind-key &   if-shell '${tmux} select-window -t :7'  'swap-window -dt :7' 'move-window -t :7'
-      bind-key *   if-shell '${tmux} select-window -t :8'  'swap-window -dt :8' 'move-window -t :8'
-      bind-key (   if-shell '${tmux} select-window -t :9'  'swap-window -dt :9' 'move-window -t :9'
+      bind-key !   if-shell '${tmux} select-window -t :1'  'swap-window -dt :1'  'move-window -t :1'
+      bind-key '"' if-shell '${tmux} select-window -t :2'  'swap-window -dt :2'  'move-window -t :2'
+      bind-key £   if-shell '${tmux} select-window -t :3'  'swap-window -dt :3'  'move-window -t :3'
+      bind-key $   if-shell '${tmux} select-window -t :4'  'swap-window -dt :4'  'move-window -t :4'
+      bind-key %   if-shell '${tmux} select-window -t :5'  'swap-window -dt :5'  'move-window -t :5'
+      bind-key ^   if-shell '${tmux} select-window -t :6'  'swap-window -dt :6'  'move-window -t :6'
+      bind-key &   if-shell '${tmux} select-window -t :7'  'swap-window -dt :7'  'move-window -t :7'
+      bind-key *   if-shell '${tmux} select-window -t :8'  'swap-window -dt :8'  'move-window -t :8'
+      bind-key (   if-shell '${tmux} select-window -t :9'  'swap-window -dt :9'  'move-window -t :9'
       bind-key )   if-shell '${tmux} select-window -t :10' 'swap-window -dt :10' 'move-window -t :10'
       
       EOF
@@ -208,7 +208,7 @@
               --border  \
               --height 20 \
               --reverse \
-              --bind tab:up,btab:down \
+              --bind tab:down,btab:up \
               --tmux 90%,60% \
               --query "$name" \
               --preview "ls $base/{}" \
