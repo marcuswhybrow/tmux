@@ -120,7 +120,7 @@
 
       # Window current
       setw -g window-status-current-format '#I #W '
-      setw -g window-status-current-style 'fg=default bg=default'
+      setw -g window-status-current-style 'fg=default,bold bg=default'
 
       # Window normal
       setw -g window-status-format '#I #W '
