@@ -37,11 +37,11 @@
               insertions: Σ
               deletions: Δ
           styles:
-              clear: '#[fg=brightblack]'
+              clear: '#[fg=brightblack,nobold]'
               state: '#[fg=brightblack]'
               branch: '#[fg=brightblack]'
               remote: '#[fg=brightblack]'
-              divergence: '#[fg=red]'
+              divergence: '#[fg=terminal,bold]'
               staged: '#[fg=brightblack]'
               conflict: '#[fg=brightblack]'
               modified: '#[fg=brightblack]'
