@@ -285,7 +285,9 @@
               set name (echo "$fzf_choice" | cut --delimiter "/" --fields 1)
             end
 
-            if not test -d "$base/$name"
+            if test -z "$name"
+              # Do nothing
+            else if not test -d "$base/$name"
               echo "There's no repo named '$name'"
             else 
               set dir "$HOME/Repos/$name"
