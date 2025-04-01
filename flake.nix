@@ -16,8 +16,27 @@
       nativeBuildInputs = [ pkgs.makeWrapper ];
     } ''
       mkdir --parents $out/bin
+
+      # Typically I replace the original executable with a script which passes 
+      # through all arguments to the orignal, save adding in the pertenant 
+      # config flag for that executable with a path to my custom config.
+      #
+      # This works for tmux only on the first invocation. On the first 
+      # invocation tmux starts itself as a server, and indeed honours the 
+      # config file passed in using the -f flag.
+      # 
+      # Subsequent invocations ignore the -f flag since the server is already 
+      # running. Tmux offers the `source` command for forcing the server to 
+      # source a new conf file. However we can't simply prefix this to every 
+      # command as it only works in conjuction with a subset of tmux commands.
+      #
+      # By running `tmux source` as a separate command before every invocation 
+      # we bypass this issue altogether. `tmux source` will fail if the server 
+      # is not running so we use `|| true` to ignore that case, and `&>/dev/null`
+      # to supress all output.
       makeWrapper ${pkgs.tmux}/bin/tmux $out/bin/tmux \
-        --add-flags "source $out/share/marcuswhybrow-tmux/tmux.conf \;"
+        --run "${pkgs.tmux}/bin/tmux source $out/share/marcuswhybrow-tmux/tmux.conf &>/dev/null || true" \
+        --add-flags "-f $out/share/marcuswhybrow-tmux/tmux.conf"
 
       mkdir --parents $out/share/marcuswhybrow-tmux
 
@@ -60,7 +79,20 @@
               divergence_space: false
       EOF
 
+      # nixpkgs contains many tmux plugins prefixed "tmuxPlugins.".
+      #
+      # Otherwise you can package github project using `pkgs.mkTmuxPlugin`.
+      # For example the vim-tmux-navigator package is defined here:
+      # - https://github.com/NixOS/nixpkgs/blob/85460312316f897680b2601449d46c5ffd4e2312/pkgs/misc/tmux-plugins/default.nix#L914-L924
+      #
+      # Use a plugin by executing the derivations `rtp` attribute in tmux.conf:
+      #   run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
+
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
+
+      # Navigate vim and tmux splits with <C-h/j/k/l> keymaps
+      run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
+
       set -g default-command "${fish}"
 
       set -g prefix C-space
