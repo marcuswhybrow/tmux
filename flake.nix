@@ -34,6 +34,7 @@
       # we bypass this issue altogether. `tmux source` will fail if the server 
       # is not running so we use `|| true` to ignore that case, and `&>/dev/null`
       # to supress all output.
+      
       makeWrapper ${pkgs.tmux}/bin/tmux $out/bin/tmux \
         --run "${pkgs.tmux}/bin/tmux source $out/share/marcuswhybrow-tmux/tmux.conf &>/dev/null || true" \
         --add-flags "-f $out/share/marcuswhybrow-tmux/tmux.conf"
@@ -79,19 +80,8 @@
               divergence_space: false
       EOF
 
-      # nixpkgs contains many tmux plugins prefixed "tmuxPlugins.".
-      #
-      # Otherwise you can package github project using `pkgs.mkTmuxPlugin`.
-      # For example the vim-tmux-navigator package is defined here:
-      # - https://github.com/NixOS/nixpkgs/blob/85460312316f897680b2601449d46c5ffd4e2312/pkgs/misc/tmux-plugins/default.nix#L914-L924
-      #
-      # Use a plugin by executing the derivations `rtp` attribute in tmux.conf:
-      #   run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
-
+      #run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
-
-      # Navigate vim and tmux splits with <C-h/j/k/l> keymaps
-      run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
 
       set -g default-command "${fish}"
 
@@ -197,6 +187,19 @@
       bind-key *   if-shell '${tmux} select-window -t :8'  'swap-window -dt :8'  'move-window -t :8'
       bind-key (   if-shell '${tmux} select-window -t :9'  'swap-window -dt :9'  'move-window -t :9'
       bind-key )   if-shell '${tmux} select-window -t :10' 'swap-window -dt :10' 'move-window -t :10'
+
+      # Navigate vim and tmux splits with <C-h/j/k/l> keymaps
+      # - https://github.com/christoomey/vim-tmux-navigator
+
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"
+      bind-key -n C-h if-shell "\$is_vim" 'send-keys C-h'  'select-pane -L'
+      bind-key -n C-j if-shell "\$is_vim" 'send-keys C-j'  'select-pane -D'
+      bind-key -n C-k if-shell "\$is_vim" 'send-keys C-k'  'select-pane -U'
+      bind-key -n C-l if-shell "\$is_vim" 'send-keys C-l'  'select-pane -R'
+      bind-key -T copy-mode-vi 'C-h' select-pane -L
+      bind-key -T copy-mode-vi 'C-j' select-pane -D
+      bind-key -T copy-mode-vi 'C-k' select-pane -U
+      bind-key -T copy-mode-vi 'C-l' select-pane -R
       
       EOF
     '';
