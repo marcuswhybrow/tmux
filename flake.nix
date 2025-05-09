@@ -128,6 +128,9 @@
       # Advice from neovim :checkhealth
       set-option -sg escape-time 20
 
+      # Status refresh frequency in seconds
+      set -g status-interval 5
+
       # Tmux position
       set-option -g status-position top
 
@@ -137,9 +140,12 @@
       set -g message-style 'fg=default bg=default'
 
       # Left aligned area
-      set -g status-left "#S"
+      # set -g status-left "#S"
       set -g status-left-length 100
-      set -g status-left-style 'fg=brightblack bg=default'
+      # set -g status-left-style 'fg=brightblack bg=default'
+
+      set -g status-left '#(tmux-status-left)'
+      # set -g status-left-style '#(tmux_left_status_color)'
 
       # Window current
       setw -g window-status-current-format '#I #W '
@@ -189,6 +195,8 @@
       bind-key (   if-shell '${tmux} select-window -t :9'  'swap-window -dt :9'  'move-window -t :9'
       bind-key )   if-shell '${tmux} select-window -t :10' 'swap-window -dt :10' 'move-window -t :10'
 
+      bind-key L 'switch-client -l; refresh-client -S'
+
       # Navigate vim and tmux splits with <C-h/j/k/l> keymaps
       # - https://github.com/christoomey/vim-tmux-navigator
 
@@ -201,6 +209,13 @@
       bind-key -T copy-mode-vi 'C-j' select-pane -D
       bind-key -T copy-mode-vi 'C-k' select-pane -U
       bind-key -T copy-mode-vi 'C-l' select-pane -R
+
+      bind-key -n MouseDown1StatusLeft run-shell 'fish --command code'
+
+      bind-key -r C-r run-shell 'colour red'
+      bind-key -r C-g run-shell 'colour green'
+      bind-key -r C-b run-shell 'colour blue'
+      bind-key -r C-d run-shell 'colour'
       
       EOF
     '';
@@ -342,8 +357,61 @@
               else
                 tmux attach -t "$name"
               end
+
+              # Immediately refresh the status line 
+              # normally takes a number of seconds defined by `status-interval`
+              tmux refresh-client -S
             end
           end
+        '')
+
+        (pkgs.writeShellScriptBin "tmux-status-left" /* sh */ ''
+          config_base=''${XDG_CONFIG_HOME:-''$HOME/.config}
+          config="''$config_base/tmux-status-left"
+          session_name=''$(tmux display-message -p '#S')
+          if [ -f "''$config/''$session_name" ]; then
+            cat "''$config/''$session_name"
+          else 
+            echo "#S"
+          fi
+          '')
+
+        (pkgs.writeShellScriptBin "colour" /* sh */ ''
+          config_base=''${XDG_CONFIG_HOME:-''$HOME/.config}
+          config="''$config_base/tmux-status-left"
+          session_name=''$(tmux display-message -p '#S')
+          file="$config/$session_name"
+
+          if [ -z "$1" ]; then 
+            echo "#S" > "$file"
+            tmux refresh-client -S
+            exit 0
+          elif [[ "$1" == "orange" ]]; then 
+            fg="#441306"; bg="#ff6900"
+          elif [[ "$1" == "red" ]]; then 
+            fg="#460809"; bg="#fb2c36"
+          elif [[ "$1" == "purple" ]]; then 
+            fg="#3c0366"; bg="#ad46ff"
+          elif [[ "$1" == "pink" ]]; then 
+            fg="#510424"; bg="#f6339a"
+          elif [[ "$1" == "green" ]]; then 
+            fg="#032e15"; bg="#00c950"
+          elif [[ "$1" == "lime" ]]; then 
+            fg="#192e03"; bg="#7ccf00"
+          elif [[ "$1" == "yellow" ]]; then 
+            fg="#432004"; bg="#f0b100"
+          elif [[ "$1" == "sky" ]]; then 
+            fg="#052f4a"; bg="#00a6f4"
+          elif [[ "$1" == "blue" ]]; then 
+            fg="#162456"; bg="#2b7fff"
+          elif [[ "$1" == "slate" ]]; then 
+            fg="#020618"; bg="#62748e"
+          elif [[ "$1" == "neutral" ]]; then 
+            fg="#0a0a0a"; bg="#737373"
+          fi
+          
+          echo "#[fg=''$fg bg=''$bg bold range=left]  #S  " > "''$config/''$session_name"
+          tmux refresh-client -S
         '')
       ];
     };
