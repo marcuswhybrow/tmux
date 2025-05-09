@@ -2,14 +2,12 @@
   description = "Tmux terminal multiplexer configured by Marcus";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    fish.url = "github:marcuswhybrow/fish";
-    neovim.url = "github:marcuswhybrow/neovim";
+    marcus-fish.url = "github:marcuswhybrow/fish";
   };
 
   outputs = inputs: let
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-    fish = "${inputs.fish.packages.x86_64-linux.fish}/bin/fish";
-    vim = "${inputs.neovim.packages.x86_64-linux.nvim}/bin/vim";
+    marcus-fish = "${inputs.marcus-fish.packages.x86_64-linux.fish}/bin/fish";
     gitmux = "${pkgs.gitmux}/bin/gitmux";
     tmux = "$out/bin/tmux";
     wrapper = pkgs.runCommand "tmux-wrapper" {
@@ -83,7 +81,7 @@
       #run-shell ${pkgs.tmuxPlugins.vim-tmux-navigator.rtp}
       cat > $out/share/marcuswhybrow-tmux/tmux.conf << EOF
 
-      set -g default-command "${fish}"
+      set -g default-command "${marcus-fish}"
 
       set -g prefix C-space
       unbind C-b
@@ -333,7 +331,7 @@
 
               if not tmux has-session -t "$name"
                 tmux new -ds "$name" -c "$dir"
-                tmux send-keys -t "$name.1" "${vim} ." ENTER
+                tmux send-keys -t "$name.1" "$EDITOR ." ENTER
               end
 
 

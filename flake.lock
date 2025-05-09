@@ -5,12 +5,12 @@
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
         "nixpkgs": [
-          "fish",
+          "marcus-fish",
           "flake-updates",
           "nixpkgs"
         ],
         "rust-overlay": [
-          "fish",
+          "marcus-fish",
           "flake-updates",
           "rust-overlay"
         ]
@@ -26,25 +26,6 @@
       "original": {
         "owner": "cargo2nix",
         "repo": "cargo2nix",
-        "type": "github"
-      }
-    },
-    "fish": {
-      "inputs": {
-        "flake-updates": "flake-updates",
-        "nixpkgs": "nixpkgs_3"
-      },
-      "locked": {
-        "lastModified": 1742998973,
-        "narHash": "sha256-lmigJd6wBX/u+Uo0S3g/2R2JoU9nIEZiVKEp7jghirE=",
-        "owner": "marcuswhybrow",
-        "repo": "fish",
-        "rev": "7a1cfe89841c5ff2f860dd3b8721fbaccab1fd3f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "marcuswhybrow",
-        "repo": "fish",
         "type": "github"
       }
     },
@@ -117,21 +98,22 @@
         "type": "github"
       }
     },
-    "neovim": {
+    "marcus-fish": {
       "inputs": {
-        "nixpkgs": "nixpkgs_4"
+        "flake-updates": "flake-updates",
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1746598114,
-        "narHash": "sha256-guXYDQrbs4rquthmAyw2RlXp94FYYt6x4w1AbSBYgLg=",
+        "lastModified": 1743293619,
+        "narHash": "sha256-+ySuD5Uymn3P+da6HkJynQkpNbECWRc5WjLvay2IUiQ=",
         "owner": "marcuswhybrow",
-        "repo": "neovim",
-        "rev": "fbb2eb1e81a5ec660027b43f7444027cb2e4464d",
+        "repo": "fish",
+        "rev": "c490bc682d6722ed60a02425377bcce58d9dda26",
         "type": "github"
       },
       "original": {
         "owner": "marcuswhybrow",
-        "repo": "neovim",
+        "repo": "fish",
         "type": "github"
       }
     },
@@ -185,22 +167,6 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1746141548,
-        "narHash": "sha256-IgBWhX7A2oJmZFIrpRuMnw5RAufVnfvOgHWgIdds+hc=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "f02fddb8acef29a8b32f10a335d44828d7825b78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_5": {
-      "locked": {
         "lastModified": 1742669843,
         "narHash": "sha256-G5n+FOXLXcRx+3hCJ6Rt6ZQyF1zqQ0DL0sWAMn2Nk0w=",
         "owner": "NixOS",
@@ -217,9 +183,8 @@
     },
     "root": {
       "inputs": {
-        "fish": "fish",
-        "neovim": "neovim",
-        "nixpkgs": "nixpkgs_5"
+        "marcus-fish": "marcus-fish",
+        "nixpkgs": "nixpkgs_4"
       }
     },
     "rust-overlay": {
