@@ -89,6 +89,9 @@
       unbind C-b
       bind C-space send-prefix
 
+      # Set terminal history large enough to view multiple long stack traces
+      set-option -g history-limit 10000
+
       # Pane splitting
       bind C-h split-window -h -b  # left
       bind C-j split-window -v     # down
@@ -307,6 +310,7 @@
                 --highlight-line \
                 --select-1 \
                 --border  \
+                --info hidden \
                 --height 20 \
                 --reverse \
                 --bind tab:down,btab:up \
