@@ -140,16 +140,17 @@
       set -g message-style 'fg=default bg=default'
 
       # Left aligned area
-      # set -g status-left "#S"
+      set -g status-left "#S"
       set -g status-left-length 100
-      # set -g status-left-style 'fg=brightblack bg=default'
+      set -g status-left-style 'fg=brightblack bg=default'
 
-      set -g status-left '#(tmux-status-left)'
+      # set -g status-left '#(tmux-status-left)'
       # set -g status-left-style '#(tmux_left_status_color)'
 
       # Window current
-      setw -g window-status-current-format '#I #W '
-      setw -g window-status-current-style 'fg=default,bold bg=default'
+      # setw -g window-status-current-format '#I #W '
+      setw -g window-status-current-format '#(tmux-window-status-current-format)'
+      # setw -g window-status-current-style 'fg=default,bold bg=default'
 
       # Window normal
       setw -g window-status-format '#I #W '
@@ -365,9 +366,9 @@
           end
         '')
 
-        (pkgs.writeShellScriptBin "tmux-status-left" /* sh */ ''
+        (pkgs.writeShellScriptBin "tmux-window-status-current-format" /* sh */ ''
           config_base=''${XDG_CONFIG_HOME:-''$HOME/.config}
-          config="''$config_base/tmux-status-left"
+          config="''$config_base/tmux-window-status-current-format"
           session_name=''$(tmux display-message -p '#S')
           if [ -f "''$config/''$session_name" ]; then
             cat "''$config/''$session_name"
@@ -378,39 +379,28 @@
 
         (pkgs.writeShellScriptBin "colour" /* sh */ ''
           config_base=''${XDG_CONFIG_HOME:-''$HOME/.config}
-          config="''$config_base/tmux-status-left"
+          config="''$config_base/tmux-window-status-current-format"
+          mkdir --parents "$config"
           session_name=''$(tmux display-message -p '#S')
           file="$config/$session_name"
 
           if [ -z "$1" ]; then 
-            echo "#S" > "$file"
+            echo "#[fg=terminal]#I #W " > "$file"
             tmux refresh-client -S
             exit 0
-          elif [[ "$1" == "orange" ]]; then 
-            fg="#441306"; bg="#ff6900"
           elif [[ "$1" == "red" ]]; then 
-            fg="#460809"; bg="#fb2c36"
-          elif [[ "$1" == "purple" ]]; then 
-            fg="#3c0366"; bg="#ad46ff"
+            fg="colour9"
           elif [[ "$1" == "pink" ]]; then 
-            fg="#510424"; bg="#f6339a"
+            fg="colour13"
           elif [[ "$1" == "green" ]]; then 
-            fg="#032e15"; bg="#00c950"
-          elif [[ "$1" == "lime" ]]; then 
-            fg="#192e03"; bg="#7ccf00"
+            fg="colour10"
           elif [[ "$1" == "yellow" ]]; then 
-            fg="#432004"; bg="#f0b100"
-          elif [[ "$1" == "sky" ]]; then 
-            fg="#052f4a"; bg="#00a6f4"
+            fg="colour11"
           elif [[ "$1" == "blue" ]]; then 
-            fg="#162456"; bg="#2b7fff"
-          elif [[ "$1" == "slate" ]]; then 
-            fg="#020618"; bg="#62748e"
-          elif [[ "$1" == "neutral" ]]; then 
-            fg="#0a0a0a"; bg="#737373"
+            fg="colour14"
           fi
           
-          echo "#[fg=''$fg bg=''$bg bold range=left]  #S  " > "''$config/''$session_name"
+          echo "#[fg=''$fg]#I #W " > "''$file"
           tmux refresh-client -S
         '')
       ];
